@@ -4,6 +4,7 @@ unique_tags = set()
 
 def load_oracle_knowledge(data_file):
   global oracle_knowledge
+  oracle_knowledge = {}
   with open(data_file, 'r', encoding='utf-8') as f:
     for line in f:
       lemma, form, tags = line.strip().split('\t')
@@ -73,19 +74,26 @@ def main(lang, data_path, working_path, table_path):
           count_all_forms = len(oracle_knowledge.items())
           NES = (1 - (P_W + S_N + S_W) / count_all_forms) * 100
           if cycle == 5:
-            with open(f'{table_path}/report_final_acc_NES.txt', 'a', encoding='utf-8') as final_report:
-              final_report.write(f'{lang}\tExp.{exp}\t{acc :.2f}\t{NES :.2f}\n')
+            with open(f'{table_path}/report_final_acc.txt', 'a', encoding='utf-8') as acc_report:
+              if exp == 1:
+                acc_report.write(f'\n{lang}')
+              acc_report.write(f'\t{acc :.1f}')
+            with open(f'{table_path}/report_final_NES.txt', 'a', encoding='utf-8') as NES_report:
+              if exp == 1:
+                NES_report.write(f'\n{lang}')
+              NES_report.write(f'\t{NES :.1f}')
 
 
 table_path = 'tables'
-with open(f'{table_path}/report_final_acc_NES.txt', 'w', encoding='utf-8') as w:
-  w.write(f'lang\tExp\tAcc\tNES\n')
+with open(f'{table_path}/report_final_acc.txt', 'w', encoding='utf-8') as w:
+  w.write(f'lang\tExp1\tExp2\tExp3\tExp4')
+with open(f'{table_path}/report_final_NES.txt', 'w', encoding='utf-8') as w:
+  w.write(f'lang\tExp1\tExp2\tExp3\tExp4')
 with open(f'{table_path}/report_oracle_stat.txt', 'w', encoding='utf-8') as w:
   w.write(f'lang\tExp\tAll\tN\tW\tC\n')
 with open(f'{table_path}/report_acc_cycles.txt', 'w', encoding='utf-8') as w:
   w.write(f'lang\tExp\tcycle\tAcc\n')
   
   
-langs = ['tur', 'ckb', 'eng', 'khk', 'rus', 'lat',  'pbs', 'mwf']
-for lang in ['tur', 'ckb', 'eng', 'khk', 'rus', 'lat', 'pbs']:
+for lang in ['tur', 'ckb', 'eng', 'khk', 'rus', 'lat','pbs', 'mwf']: 
   main(lang, data_path='data', working_path='results', table_path=table_path)
